@@ -1,6 +1,6 @@
 <a href="https://opensource.newrelic.com/oss-category/#new-relic-experimental"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Experimental.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Experimental.png"><img alt="New Relic Open Source experimental project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Experimental.png"></picture></a>
 
-# [Project Name]
+# APM Service Levels with Tags
 ![GitHub forks](https://img.shields.io/github/forks/newrelic-experimental/newrelic-experimental-FIT-template?style=social)
 ![GitHub stars](https://img.shields.io/github/stars/newrelic-experimental/newrelic-experimental-FIT-template?style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/newrelic-experimental/newrelic-experimental-FIT-template?style=social)
@@ -16,43 +16,94 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/newrelic-experimental/newrelic-experimental-FIT-template)
 ![GitHub pull requests closed](https://img.shields.io/github/issues-pr-closed/newrelic-experimental/newrelic-experimental-FIT-template)
 
+> This module creates a latency service level and a success rate service level for a service along with corresponding tags. It was written to demonstrate the following:
+> * How to create service levels using terraform
+> * How to use the newrelic_entity data source to look up entity Guids
+> * How to create tags and associate them with service levels
+> * Recommended best practices for naming and tagging 
 
->[Brief description - what is the project and value does it provide? How often should users expect to get releases? How is versioning set up? Where does this project want to go?]
+> ### Flow
+> 1. Look up the service entity guid using the service name (must be exact)
+> 2. Create latency and success category service levels. 
+> 3. Add tags for each service level
 
 ## Value
 
 |Metrics | Events | Logs | Traces | Visualization | Automation |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|:white_check_mark:|:white_check_mark:|:x:|:white_check_mark:|:x:|:x:|
-
-### List of Metrics,Events,Logs,Traces
-|Name | Type | Description |
-|:-:|:-:|:-:|
-|*metric.name* | Metric| *description*|
-|*event.name* | Event|  *description*|
-|*log.name* | Log|  *description*|
-|*trace.name*| Trace| *description*
-|---|---|---|
+|:x:|:x:|:x:|:white_check_mark:|:white_check_mark:|:white_check_mark:|
 
 ## Installation
 
-> [Include a step-by-step procedure on how to get your code installed. Be sure to include any third-party dependencies that need to be installed separately]
+> This can run anywhere you have the terraform CLI installed.
 
 ## Getting Started
 
->[Simple steps to start working with the software similar to a "Hello World"]
+> You can use this module as is or fork/clone it to your use case. 
+Make sure to initiate the [provider](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/guides/provider_configuration#configuration-via-the-provider-block) from the top module.
+
+### Ideas
+* You don't need to use a data look up to get the entity guid. You can pass in the entity guid and keep the app name for the service level name or change the naming convention completely.   
+* Service levels apply to Synthetic checks, Databases, Web applications, anything. More examples will come. Until then, there is no need to wait.
+* Update the module to pass in different targets from 95% and 99%. You can also use 1 day or 28 day service levels.  
+Incorporate a GraphQl query that executes a NRQL query that baselines your app. No need to pass in the latency after that!  
+
+
+## New Relic resource definitions
+* https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/service_level
+* https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/entity_tags
+
+## Inputs
+* nr_api_key - Your New Relic User API Key, if running as a main rather than a module
+* nr_account_id - The account id to associate with the Service levels
+* app_name - The name of the APM application
+* app_latency - The latency threshold for the APM application
+* service_level_filter - Filter to use to isolate transactions or exclude transactions
+* service_level_type - Type of service level. See the notes in the variable file
+* team_names - Names of teams with a vested interest in this service level
+
+## Outputs
+* latency_service_level_id
+* success_service_level_id
+* latency_service_level_guid
+* success_service_level_guid
 
 ## Usage
 
->[**Optional** - Include more thorough instructions on how to use the software. This section might not be needed if the Getting Started section is enough. Remove this section if it's not needed.]
+> ### New Relic resource definitions
+> * https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/service_level
+> * https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/entity_tags
+
+> ### Inputs
+> * nr_api_key - Your New Relic User API Key, if running as a main rather than a module
+> * nr_account_id - The account id to associate with the Service levels
+> * app_name - The name of the APM application
+> * app_latency - The latency threshold for the APM application
+> * service_level_filter - Filter to use to isolate transactions or exclude transactions
+> * service_level_type - Type of service level. See the notes in the variable file
+> * team_names - Names of teams with a vested interest in this service level
+
+> ### Outputs
+> * latency_service_level_id
+> * success_service_level_id
+> * latency_service_level_guid
+> * success_service_level_guid
+
+> ### Ideas
+> * You don't need to use a data look up to get the entity guid. You can pass in the entity guid and keep the app name for the service level name or change the naming convention completely.   
+> * Service levels apply to Synthetic checks, Databases, Web applications, anything. More examples will come. Until then, there is no need to wait.
+> * Update the module to pass in different targets from 95% and 99%. You can also use 1 day or 28 day service levels.  
+Incorporate a GraphQl query that executes a NRQL query that baselines your app. No need to pass in the latency after that!  
+
 
 ## Building
 
->[**Optional** - Include this section if users will need to follow specific instructions to build the software from source. Be sure to include any third party build dependencies that need to be installed separately. Remove this section if it's not needed.]
+> * Configure input variables as per instructions.
+> * Run a terraform init as per [provider instructions](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/guides/provider_configuration#configuration-via-the-provider-block) from the top module. 
+> * Run terraform plan to verify what will be created. 
+> * Run terraform apply to create the service levels and corresponding tags.
+> * Save your terraform configuration and tf state files using existing tools and best practices. Don't have best practices yet? You can follow [ours](https://docs.newrelic.com/docs/new-relic-solutions/observability-maturity/operational-efficiency/observability-as-code-guide/) or [terraform's](https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices/part3.2) as a start.
 
-## Testing
-
->[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
 
 ## Support
 
@@ -73,8 +124,5 @@ If you believe you have found a security vulnerability in this project or any of
 
 ## License
 
-[Project Name] is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+APM Service Levels with Tags is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
 
->[If applicable: [Project Name] also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
->
-Testing commit permissions. Please disregard if you see this text!
