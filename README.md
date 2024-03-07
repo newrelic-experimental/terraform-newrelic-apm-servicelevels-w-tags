@@ -31,7 +31,7 @@
 
 |Metrics | Events | Logs | Traces | Visualization | Automation |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|:x:|:x:|:x:|:white_check_mark:|:white_check_mark:|:white_check_mark:|
+|:x:|:x:|:x:|:x:|:white_check_mark:|:white_check_mark:|
 
 ## Installation
 
@@ -41,32 +41,6 @@
 
 > You can use this module as is or fork/clone it to your use case. 
 Make sure to initiate the [provider](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/guides/provider_configuration#configuration-via-the-provider-block) from the top module.
-
-### Ideas
-* You don't need to use a data look up to get the entity guid. You can pass in the entity guid and keep the app name for the service level name or change the naming convention completely.   
-* Service levels apply to Synthetic checks, Databases, Web applications, anything. More examples will come. Until then, there is no need to wait.
-* Update the module to pass in different targets from 95% and 99%. You can also use 1 day or 28 day service levels.  
-Incorporate a GraphQl query that executes a NRQL query that baselines your app. No need to pass in the latency after that!  
-
-
-## New Relic resource definitions
-* https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/service_level
-* https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/entity_tags
-
-## Inputs
-* nr_api_key - Your New Relic User API Key, if running as a main rather than a module
-* nr_account_id - The account id to associate with the Service levels
-* app_name - The name of the APM application
-* app_latency - The latency threshold for the APM application
-* service_level_filter - Filter to use to isolate transactions or exclude transactions
-* service_level_type - Type of service level. See the notes in the variable file
-* team_names - Names of teams with a vested interest in this service level
-
-## Outputs
-* latency_service_level_id
-* success_service_level_id
-* latency_service_level_guid
-* success_service_level_guid
 
 ## Usage
 
@@ -89,7 +63,7 @@ Incorporate a GraphQl query that executes a NRQL query that baselines your app. 
 > * latency_service_level_guid
 > * success_service_level_guid
 
-> ### Ideas
+## Extension Ideas
 > * You don't need to use a data look up to get the entity guid. You can pass in the entity guid and keep the app name for the service level name or change the naming convention completely.   
 > * Service levels apply to Synthetic checks, Databases, Web applications, anything. More examples will come. Until then, there is no need to wait.
 > * Update the module to pass in different targets from 95% and 99%. You can also use 1 day or 28 day service levels.  
